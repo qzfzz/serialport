@@ -25,7 +25,7 @@ class SerialPort
      *
      * @var resource
      */
-    private $fd;
+    private $fd = false;
 
     /**
      * @var ParserInterface
@@ -96,6 +96,14 @@ class SerialPort
         throw new WriteNotAllowed();
     }
 
+    public function flush()
+    {
+        if( $this->fd )
+        {
+            fflush($this->fd);
+        }
+    }
+
     /**
      * Read data byte per byte until separator found
      *
@@ -131,7 +139,11 @@ class SerialPort
     {
         $this->ensureDeviceOpen();
 
-        return fclose($this->fd);
+        $ret = fclose($this->fd);
+
+        $this->fd = false;
+
+        return $ret;
     }
 
     /**
