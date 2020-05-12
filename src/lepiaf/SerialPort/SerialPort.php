@@ -101,7 +101,7 @@ class SerialPort
      *
      * @return string
      */
-    public function read()
+    public function read($len = 0)
     {
         $this->ensureDeviceOpen();
 
@@ -110,6 +110,11 @@ class SerialPort
         do {
             $char = fread($this->fd, 1);
             $chars[] = $char;
+
+            if( $len != 0 && count($chars) >= $len )
+            {
+                break;
+            }
         } while ($char != $this->getParser()->getSeparator());
 
         return $this->getParser()->parse($chars);
